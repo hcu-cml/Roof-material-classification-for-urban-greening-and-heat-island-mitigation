@@ -43,3 +43,7 @@ venv/
 .DS_Store
 .idea/
 .vscode/
+
+# repository figures used in the README
+!docs/figures/*.png
+!docs/figures/*.jpg
