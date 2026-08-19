@@ -405,13 +405,3 @@ If you use this code, please cite the accompanying article:
   author  = {Elmehdi Kanna and Jannik Matijevic and Lukas Arzoumanidis and Huynh Duc An Son Nguyen and Youness Dehbi}
 }
 ```
-
-Machine-readable metadata is in [`CITATION.cff`](CITATION.cff), which GitHub
-renders as a "Cite this repository" button.
-
-## License
-
-No license file is included. Until one is added, default copyright applies and
-others may not reuse the code. The vendored `green_roof_scenario/` package also
-states that no open-source license has been selected, so agree on a single
-license with its author before publishing.
