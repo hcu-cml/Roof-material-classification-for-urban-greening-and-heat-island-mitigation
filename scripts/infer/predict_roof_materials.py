@@ -61,10 +61,12 @@ from ultralytics import YOLO
 
 # Multiplicative priors in the YOLO index space (order of model.names).
 # They encode city-scale rarity, e.g. fully glazed roofs are uncommon.
+
+# Use CLASS_PRIORS to penalize rare classes given the weight of the material class distribution on each city.
 CLASS_PRIORS = {
     0: 1.0,   # concrete
-    1: 0.2,   # glass -> strongly penalize
-    2: 0.2,   # metal
+    1: 1.0,   # glass
+    2: 1.0,   # metal
     3: 1.0,   # roof_tiles
     4: 1.0,   # tar_paper
 }
