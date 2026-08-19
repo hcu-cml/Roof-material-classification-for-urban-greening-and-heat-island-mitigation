@@ -7,6 +7,8 @@ Code for the article
 **[Semantic enrichment of 3D city models via roof material classification for urban greening and heat island mitigation](https://www.sciencedirect.com/science/article/pii/S2210670726006177)**
 (Sustainable Cities and Society, 149, 2026, 107734).
 
+![From orthophoto to roof material classes, greening eligibility and modelled cooling potential](docs/figures/pipeline_overview.png)
+
 End-to-end code for the study: predict **roof material composition** from
 high-resolution aerial imagery, write it onto **CityGML / LoD2 building
 footprints**, and use the enriched footprints to model how **green-roof
