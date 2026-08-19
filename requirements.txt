@@ -1,0 +1,20 @@
+# Python >= 3.10 (the scripts use PEP 604 `X | None` annotations)
+# Install order matters on some systems: install GDAL-backed packages first.
+
+numpy
+pandas
+requests
+Pillow
+pyyaml
+
+# geo stack
+rasterio
+shapely>=2.0
+geopandas
+pyproj
+
+# imaging / ML
+opencv-python
+scikit-image
+scikit-learn
+ultralytics

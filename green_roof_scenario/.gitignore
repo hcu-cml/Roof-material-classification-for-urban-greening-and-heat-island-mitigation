@@ -1,0 +1,57 @@
+# Operating-system and editor files
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Python environments, caches, and build products
+.venv/
+.conda/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+site/
+
+# Local recovery metadata
+.repo_recovery_manifest/
+
+# Large source data and generated analysis products
+data/
+outputs/
+results*/
+hamburg/
+hamburg_*/
+docs/literature/
+figures/
+
+# Geospatial/vector/raster artifacts outside the directories above
+*.tif
+*.TIF
+*.tiff
+*.TIFF
+*.gpkg
+*.gpkg-shm
+*.gpkg-wal
+*.geojson
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.qgz
+*.qml
+*.aux.xml
+
+# Local top-level exports
+/*.pdf
+/*.zip

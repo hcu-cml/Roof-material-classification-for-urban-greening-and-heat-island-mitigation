@@ -1,0 +1,23 @@
+# Example dataset descriptor for the roof material classes.
+#
+# `build_classification_dataset.py --yaml` reads only the `names` block, which it
+# uses to turn numeric label ids into class folder names.
+#
+# The order below must match the label ids in your detection dataset. It also
+# defines the YOLO index space that `predict_roof_materials.py` sees through
+# `model.names`, so do not reorder it without re-checking CLASS_PRIORS and
+# CLASS_MIN_COV in that script.
+#
+# Replace `path` with the location of your own dataset.
+
+path: /path/to/your/dataset
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: concrete
+  1: glass
+  2: metal
+  3: roof_tiles
+  4: tar_paper

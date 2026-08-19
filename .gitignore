@@ -1,0 +1,45 @@
+# Data and outputs are never committed.
+# Paths are anchored with a leading slash so they only match at the repository
+# root (an unanchored "data/" would also swallow scripts/data/).
+/data/
+/patches/
+/chips/
+/runs/
+/outputs/
+/dataset_cls/
+/material_yolo*/
+
+# imagery and model artefacts, anywhere in the tree
+*.tif
+*.tiff
+*.TIF
+*.TIFF
+*.jpg
+*.jpeg
+*.png
+*.jgw
+*.wld
+*.pt
+*.onnx
+*.geojson
+*.gpkg
+*.gpkg-shm
+*.gpkg-wal
+*.shp
+*.shx
+*.dbf
+*.prj
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# os / editors
+.DS_Store
+.idea/
+.vscode/

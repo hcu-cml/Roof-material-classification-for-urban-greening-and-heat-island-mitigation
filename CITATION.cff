@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the accompanying article."
+title: "Roof material classification and green-roof cooling scenarios"
+abstract: >-
+  Code for semantic enrichment of 3D city models with roof material classes
+  derived from aerial orthophotos, and for modelling the land surface
+  temperature effect of green-roof interventions on the enriched buildings.
+type: software
+authors:
+  - family-names: Kanna
+    given-names: Elmehdi
+  - family-names: Matijevic
+    given-names: Jannik
+  - family-names: Arzoumanidis
+    given-names: Lukas
+  - family-names: Nguyen
+    given-names: Huynh Duc An Son
+  - family-names: Dehbi
+    given-names: Youness
+preferred-citation:
+  type: article
+  title: >-
+    Semantic enrichment of 3D city models via roof material classification for
+    urban greening and heat island mitigation
+  authors:
+    - family-names: Kanna
+      given-names: Elmehdi
+    - family-names: Matijevic
+      given-names: Jannik
+    - family-names: Arzoumanidis
+      given-names: Lukas
+    - family-names: Nguyen
+      given-names: Huynh Duc An Son
+    - family-names: Dehbi
+      given-names: Youness
+  journal: "Sustainable Cities and Society"
+  volume: 149
+  start: 107734
+  year: 2026
+  issn: "2210-6707"
+  doi: "10.1016/j.scs.2026.107734"
+  url: "https://www.sciencedirect.com/science/article/pii/S2210670726006177"
