@@ -69,9 +69,6 @@ CITATION.cff                                  machine-readable citation metadata
 
 green_roof_scenario/                  PART 2 (installable package, own readme)
   src/green_roof_scenario/            scenario, modelling, masking, CLI
-  docs/runbook.md                     the exact per-city commands that were run
-  docs/methodology/                   modelling background (PDF)
-  reports/                            result reports
   tests/                              synthetic-data test suite
 ```
 
@@ -263,7 +260,6 @@ Material ids follow the `TARGET_ID` mapping at the top of the script:
 6. The vectorised roof mask is matched to a footprint by IoU (`--min_iou`); per
    `gml_id`, the chip with the most roof pixels wins.
 
-Class priors down-weight rare full-roof classes (glass, metal) at ranking time.
 
 ---
 
@@ -272,8 +268,7 @@ Class priors down-weight rare full-roof classes (glass, metal) at ranking time.
 `green_roof_scenario/` is a self-contained Python package with its own CLI,
 tests and documentation. Read
 [`green_roof_scenario/readme.md`](green_roof_scenario/readme.md) for the full
-option list; the per-city commands actually used for the reported runs are in
-[`green_roof_scenario/docs/runbook.md`](green_roof_scenario/docs/runbook.md).
+option list.
 
 In short, it derives NDVI, broadband albedo and NDBI from a Landsat 8/9
 Collection 2 Level-2 scene, fits an empirical model (Random Forest by default)
@@ -346,47 +341,6 @@ Green-roof targets are city-specific and should come from comparable local roofs
 in the **same** acquisition. Do not reuse another city's targets.
 
 ---
-
-## Known limitations
-
-Part 1:
-
-- **Two class id spaces.** `model.names` (YOLO order) and `TARGET_ID` (output
-  order) are different mappings. `CLASS_PRIORS` and `CLASS_MIN_COV` in
-  `predict_roof_materials.py` are indexed with YOLO indices while the keys of
-  `CLASS_MIN_COV` are written as `TARGET_ID` values. This is left unchanged so
-  results stay reproducible; re-check all three dicts if you retrain with a
-  different class order.
-- **One label per training image.** `build_classification_dataset.py` reads only
-  the first token of the first line of each label file, so multi-object label
-  files are collapsed to their first entry.
-- **Roof mask by brightness.** The roof mask at inference time is
-  `grayscale > 5` on the masked chip, so very dark roofs can lose pixels and
-  black background inside a footprint is treated as non-roof.
-- **CRS must match.** Chips and footprints are compared in the same coordinate
-  system with no reprojection; mixing EPSG:4326 footprints with projected imagery
-  silently produces zero matches.
-- **Oversampling duplicates files on disk** rather than using a weighted sampler,
-  so a balanced dataset can be several times larger than the original.
-
-Part 2 (summarised from `green_roof_scenario/readme.md`):
-
-- Results describe a single satellite acquisition, not seasonal or
-  air-temperature effects.
-- Model performance is scene-dependent; check test R2/RMSE and residuals.
-- Very small roofs are affected by Landsat mixed-pixel effects.
-- OSM green-roof tags are incomplete, and CityGML ids must match the building
-  layer for slope enrichment.
-- `--boundary` is applied *before* model fitting, so adding it changes the fitted
-  model rather than only cropping the outputs.
-
-## Attribution
-
-`green_roof_scenario/` is a vendored copy of the green-roof / LST scenario tool
-developed by Jannik Matijevic for this study, upstream at
-<https://github.com/jaenixm/lst_rooftype_material> (package version 0.2.0). It
-keeps its own readme, tests and `.gitignore`; keep the two histories
-distinguishable if you later re-sync with upstream.
 
 ## Citation
 
