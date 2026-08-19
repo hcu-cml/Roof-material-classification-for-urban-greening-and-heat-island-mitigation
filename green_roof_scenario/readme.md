@@ -1,5 +1,12 @@
 # Green Roof Scenario
 
+Part 2 of this repository: the green-roof cooling scenario component of
+*Semantic enrichment of 3D city models via roof material classification for
+urban greening and heat island mitigation* (Sustainable Cities and Society,
+149, 2026, 107734). It consumes the material-enriched building footprints
+produced by the classification pipeline in the repository root. See the
+[root readme](../README.md) for the end-to-end workflow.
+
 Green Roof Scenario is a Python package and command-line workflow for estimating how selected green-roof interventions could change land surface temperature (LST). It derives NDVI, broadband albedo, and NDBI from a Landsat 8/9 Collection 2 Level-2 scene, fits an empirical regression model against observed LST, changes the predictors only over selected roofs, and exports scenario rasters and per-building statistics.
 
 The current package version is **0.2.0**. It supports Python 3.10 through 3.13.
@@ -8,11 +15,12 @@ The current package version is **0.2.0**. It supports Python 3.10 through 3.13.
 
 ## Quick start
 
-The easiest reproducible installation uses [uv](https://docs.astral.sh/uv/) and the committed `uv.lock` file:
+This package lives in the `green_roof_scenario/` folder of the repository. The
+easiest reproducible installation uses [uv](https://docs.astral.sh/uv/) and the
+committed `uv.lock` file:
 
 ```bash
-git clone https://github.com/jaenixm/lst_rooftype_material.git
-cd lst_rooftype_material
+cd green_roof_scenario
 uv sync
 uv run green-roof-scenario --help
 ```
@@ -20,10 +28,19 @@ uv run green-roof-scenario --help
 You can also use a standard virtual environment:
 
 ```bash
+cd green_roof_scenario
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .
+green-roof-scenario --help
+```
+
+Or install it into the environment you already use for Part 1, from the
+repository root:
+
+```bash
+pip install -e ./green_roof_scenario
 green-roof-scenario --help
 ```
 
@@ -232,4 +249,19 @@ print(outputs.delta_raster)
 
 Programmatic configuration validates filter selection, input mode, model name, parameter ranges, sampling values, and rasterization settings before the run starts.
 
+## Tests
+
+The test suite creates temporary synthetic rasters and vectors; it does not require the large local research datasets:
+
+```bash
+uv run python -m unittest discover -s tests -v
+```
+
+If GIS commands report a `proj.db` layout-version conflict, a Conda installation is leaking PROJ/GDAL paths into another environment. Deactivate Conda, clear those variables, and try again:
+
+```bash
+conda deactivate
+unset PROJ_DATA PROJ_LIB GDAL_DATA GDAL_DRIVER_PATH
+uv run python -m unittest discover -s tests -v
+```
 
