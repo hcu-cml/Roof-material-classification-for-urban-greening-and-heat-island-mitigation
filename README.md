@@ -231,7 +231,7 @@ python scripts/infer/predict_roof_materials.py \
 ```
 
 `--min_px` in stage 8 controls how small a building may be to still get a chip;
-200-250 is a reasonable value for dense historic centres, 100 keeps more small
+200-250 is a reasonable value for dense urban areas, 100 keeps more small
 outbuildings. Use `--device cuda` on NVIDIA, `--device mps` on Apple silicon,
 `--device cpu` otherwise.
 
@@ -254,21 +254,6 @@ Material ids follow the `TARGET_ID` mapping at the top of the script:
 | 2 | glass |
 | 3 | roof_tiles |
 | 4 | tar_paper |
-
-### How the prediction works
-
-1. One whole-roof prediction gives the default class for the building.
-2. A sliding window (`--tile`, `--stride`, `--pad`) reclassifies each roof
-   region; a tile only overrides the default when it is confident enough
-   (`--nondefault_min_conf`) **and** clearly beats the default
-   (`--margin_over_default`).
-3. Non-default regions smaller than `--min_island_px` are reverted.
-4. An orientation-aware majority filter smooths along the roof main axis.
-5. Coverage fractions are computed per material; secondary materials must pass
-   both an absolute and a relative threshold to be reported.
-6. The vectorised roof mask is matched to a footprint by IoU (`--min_iou`); per
-   `gml_id`, the chip with the most roof pixels wins.
-
 
 ---
 
