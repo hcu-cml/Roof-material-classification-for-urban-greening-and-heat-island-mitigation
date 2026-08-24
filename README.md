@@ -343,3 +343,8 @@ If you use this code, please cite the accompanying article:
   author  = {Elmehdi Kanna and Jannik Matijevic and Lukas Arzoumanidis and Huynh Duc An Son Nguyen and Youness Dehbi}
 }
 ```
+
+---
+
+Check our previous work, on which this work was built:
+[hcu-cml/citydb-roofmats-ai](https://github.com/hcu-cml/citydb-roofmats-ai).
