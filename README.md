@@ -44,8 +44,9 @@ Material classes: `concrete`, `glass`, `metal`, `roof_tiles`, `tar_paper`.
 ```
 PART 1 - roof material classification
   A. training data          B. training                 C. inference
-  OSM roof:material tags                                city wide orthophotos
-  + orthophotos                                                |
+  OSM roof:material                                    city wide orthophotos
+  tags + orthophotos                                           |
+          |                                                    |
           v                                                    v
   masked chips ---------->  class balancing            footprint guided masking
                                    |                           |
