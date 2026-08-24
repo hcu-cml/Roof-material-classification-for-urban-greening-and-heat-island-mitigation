@@ -43,6 +43,7 @@ Material classes: `concrete`, `glass`, `metal`, `roof_tiles`, `tar_paper`.
 
 ```
 PART 1 - roof material classification
+
   A. training data          B. training                 C. inference
   OSM roof:material                                    city wide orthophotos
   tags + orthophotos                                           |
@@ -59,13 +60,17 @@ PART 1 - roof material classification
                                                           (GeoJSON)
                                                                         |
 PART 2 - green-roof cooling scenario                                    |
+                                                                        |
   Landsat 8/9 C2 L2 scene ------------------------------+---------------+
+                                                        |
                                                         v
                        NDVI / albedo / NDBI -> RF or linear fit against observed LST
+                                                        |
                                                         v
                                     filtering the green eligible roofs
+                                                        |
                                                         v
-                                  delta_LST raster and cooling statistics
+                                   delta_LST raster and cooling statistics
 ```
 
 ## Repository layout
