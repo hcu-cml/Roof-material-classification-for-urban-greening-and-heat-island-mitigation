@@ -22,7 +22,6 @@
 !docs/figures/*.jpg
 *.jgw
 *.wld
-*.pt
 *.onnx
 *.geojson
 *.gpkg
