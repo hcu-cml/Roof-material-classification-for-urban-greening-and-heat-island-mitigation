@@ -23,10 +23,19 @@ The repository has two parts that are meant to be run in sequence:
 
 Material classes: `concrete`, `glass`, `metal`, `roof_tiles`, `tar_paper`.
 
-> **No data is shipped with this repository.** Every script takes its inputs as
-> command-line arguments. Link your own orthophotos, your own building
-> footprints, your own Landsat scene and your own model checkpoint. All paths in
+> **No data is shipped with this repository.** All paths in
 > the examples below are placeholders.
+
+## Data you have to provide
+
+| What | Used by | Notes |
+| --- | --- | --- |
+| Orthophoto WMS endpoint + boundaries | `fetch_osm_roof_crops.py` | any service you are licensed to use |
+| Orthophoto tiles (GeoTIFF) | `tile_orthophoto.py` | inference input |
+| Building footprints (GeoJSON) | `mask_chips_by_footprint.py`, `predict_roof_materials.py` | **same CRS as the imagery**; a `gml_id` property is used as the building key |
+| Model checkpoint (`best.pt`) | `predict_roof_materials.py` | for germany `weights/best.pt` |
+| Landsat 8/9 Collection 2 Level-2 scene | `green-roof-scenario` | one scene folder with `ST_B10`, `QA_PIXEL`, `SR_B2/B4/B5/B6/B7` |
+| CityGML LoD2 files or a GeoJSON with roof-slope information | `green-roof-enrich-slopes` | important for greening eligibility filter |
 
 ---
 
@@ -35,13 +44,13 @@ Material classes: `concrete`, `glass`, `metal`, `roof_tiles`, `tar_paper`.
 ```
 PART 1 - roof material classification
   A. training data          B. training                 C. inference
-  OSM roof:material tags    detection -> classification your orthophoto tiles
-  + your WMS crops                 |                           |
+  OSM roof:material tags    Masked tiles                City Wide Orthophotos
+  + orthophotos                    |                           |
           v                        v                           v
-  footprint-masked chips     class balancing            mosaic -> patches -> chips
+  masked chips              class balancing            footprint guided masking
                                    |                           |
                                    v                           v
-                            YOLO11-cls fine-tune  ->  best.pt -> grid-refined prediction
+                            YOLO11-cls classification  ->  best.pt -> Multi-material classification
                                                                         |
                                                                         v
                                               footprints + predicted_roof_materials
@@ -52,29 +61,28 @@ PART 2 - green-roof cooling scenario                                    |
                                                         v
                        NDVI / albedo / NDBI -> RF or linear fit against observed LST
                                                         v
-                       predictors blended toward green-roof targets over selected roofs
+                                    filtering the green eligible roofs
                                                         v
-                       delta_LST raster + per-building cooling statistics
+                                  delta_LST raster and cooling statistics
 ```
 
 ## Repository layout
 
 ```
 scripts/                              PART 1
-  data/    fetch_osm_roof_crops.py            training crops from OSM + your WMS
+  data/    fetch_osm_roof_crops.py            training crops from OSM
            worldfile_to_geotiff.py            .jpg + .jgw  ->  GeoTIFF
-           mask_crops_by_osm_footprint.py     blacken everything outside the roof
-  train/   build_classification_dataset.py    detection layout -> classification layout
+           mask_crops_by_osm_footprint.py     Masking out background and keeping only roof pixels
+  train/   build_classification_dataset.py    change format from yolo detection layout to classification layout (optional if needed)
            balance_classes_by_oversampling.py oversample under-represented materials
-           train_material_classifier.py       YOLO11-cls fine-tuning
-  infer/   tile_orthophoto.py                 mosaic + fixed-size patches
-           mask_chips_by_footprint.py         one masked chip per building
-           predict_roof_materials.py          prediction -> enriched GeoJSON
-           add_dominant_material.py           optional scalar dominant_material field
+           train_material_classifier.py       YOLO11-cls training
+  infer/   tile_orthophoto.py                 turn a city tif into 500x500 patches
+           mask_chips_by_footprint.py         generate one masked chip per building
+           predict_roof_materials.py          material prediction stored in a GeoJSON file
+           add_dominant_material.py           detection and classification of secondary materials (optional)
 configs/   material.example.yaml              class order (must match the weights)
-examples/  run_full_pipeline.sh               batch runner, one config block to edit
-weights/   README.md                          where to put best.pt
-CITATION.cff                                  machine-readable citation metadata
+examples/  run_full_pipeline.sh               one config block to run the entire pipeline (must edit repositories)
+weights/   best.pt                            our best.pt weight from training on german orthophotos (change based on the region of the orthophotos and city slected for inference)
 
 green_roof_scenario/                  PART 2 (installable package, own readme)
   src/green_roof_scenario/            scenario, modelling, masking, CLI
@@ -108,23 +116,6 @@ Both parts need a working GDAL/PROJ stack for `rasterio`/`geopandas`/`pyproj`.
 If PROJ complains about a `proj.db` version conflict, a Conda installation is
 usually leaking paths into the active environment; deactivate Conda and unset
 `PROJ_DATA PROJ_LIB GDAL_DATA GDAL_DRIVER_PATH`.
-
-## Data you have to provide
-
-| What | Used by | Notes |
-| --- | --- | --- |
-| Orthophoto WMS endpoint + layer | `fetch_osm_roof_crops.py` | any service you are licensed to use |
-| Orthophoto tiles (GeoTIFF) of your AOI | `tile_orthophoto.py` | inference input |
-| Building footprints (GeoJSON) | `mask_chips_by_footprint.py`, `predict_roof_materials.py` | **same CRS as the imagery**, e.g. EPSG:25832; a `gml_id` property is used as the building key |
-| Model checkpoint (`best.pt`) | `predict_roof_materials.py` | see `weights/README.md` |
-| Landsat 8/9 Collection 2 Level-2 scene | `green-roof-scenario` | one scene folder with `ST_B10`, `QA_PIXEL`, `SR_B2/B4/B5/B6/B7` |
-| CityGML LoD2 files | `green-roof-enrich-slopes` | optional, for the roof-slope filter |
-
-**Where do I put my own links?** Every script takes its inputs as command-line
-arguments and refuses to guess. If you prefer one place to edit, open
-[`examples/run_full_pipeline.sh`](examples/run_full_pipeline.sh): it has a single
-configuration block at the top where you enter your paths, endpoint and target
-values, and it then runs stages 7 to 13 end to end.
 
 ---
 
@@ -162,7 +153,7 @@ python scripts/data/mask_crops_by_osm_footprint.py \
 ```
 
 Stage 1 caches the Overpass result in `data/raw/buildings_<city>.geojson` and
-reuses it on the next run. Delete that file to force a refetch.
+reuses it on the next run.
 
 ## B. Training
 
@@ -264,10 +255,10 @@ tests and documentation. Read
 [`green_roof_scenario/readme.md`](green_roof_scenario/readme.md) for the full
 option list.
 
-In short, it derives NDVI, broadband albedo and NDBI from a Landsat 8/9
+It derives NDVI, broadband albedo and NDBI from a Landsat 8/9
 Collection 2 Level-2 scene, fits an empirical model (Random Forest by default)
 against observed LST, blends the predictors toward green-roof target values over
-the *selected* roofs only, and reports
+the *selected* green eligible roofs only, and reports
 
 ```
 delta_LST = modelled_scenario_LST - modelled_baseline_LST
@@ -280,8 +271,7 @@ empirical scenario tool, not a physical urban-climate model.
 
 The material codes line up by construction: the scenario runs select
 `--roof_materials_type "0,4"`, i.e. **concrete and tar paper**, which are exactly
-ids 0 and 4 of the `TARGET_ID` table above. Those are the flat, dark, high-uptake
-roofs that are plausible greening candidates.
+ids 0 and 4 of the `TARGET_ID` table above. 
 
 The enriched GeoJSON from stage 9 can be passed straight in, because the
 selection filter takes the first entry of a list-valued attribute, which is the
