@@ -73,6 +73,8 @@ PART 2 - green-roof cooling scenario                                    |
                                    delta_LST raster and cooling statistics
 ```
 
+![Technical pipeline](docs/figures/pipeline_techincal.png)
+
 ## Repository layout
 
 ```
